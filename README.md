@@ -1,6 +1,7 @@
 # qserv-deploy usage
 
 Simple example to setup continous integration for an application running inside Kubernetes.
+
 Show how to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/fjammes/kind-travis-ci)
 
 [![Build
