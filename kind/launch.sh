@@ -13,8 +13,14 @@ BASE=$(abs_path "$DIR/..")
 
 export KUBECONFIG="$(kind get kubeconfig-path)"
 
+# Launch application to test here
+$BASE/run.sh
+
 echo "Pods are up:"
-kubectl get pods"
+kubectl get pods
+
+# Launch application integration test here
+$BASE/test.sh
 
 # TODO Add strong check for startup
 sleep 10
