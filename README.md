@@ -9,8 +9,8 @@ Status](https://travis-ci.org/fjammes/kind-travis-ci.svg?branch=master)](https:/
 
 ## Pre-requisites
 
-* Create a github repository dedicated to  continous integration for a given application, for example: https://github.com/\<github-account>/\<github-repository>
-* Active github repository for travis-ci, see https://travis-ci.org/\<github-account>/\<github-repository>
+* Create a github repository dedicated to  continous integration for a given application, for example: https://github.com/\<github-account\>/\<github-repository\>
+* Active github repository for travis-ci, see https://travis-ci.org/\<github-account\>/\<github-repository\>
 * Create a container image for the given application and push it to a container registry
 
 ## Setup
