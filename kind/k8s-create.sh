@@ -17,9 +17,9 @@ chmod +x /tmp/kubectl
 sudo mv /tmp/kubectl "$KUBECTL_BIN"
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-kind create cluster --config "$DIR/kind-config.yaml" --name qserv
+kind create cluster --config "$DIR/kind-config.yaml"
 
-export KUBECONFIG=$(kind get kubeconfig-path --name="qserv")
+export KUBECONFIG=$(kind get kubeconfig-path)
 
 # this for loop waits until kubectl can access the api server that kind has created
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'

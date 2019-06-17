@@ -3,5 +3,5 @@
 set -e
 set -x
 
-kind delete cluster --name qserv
+kind delete cluster
 unset KUBECONFIG

@@ -7,4 +7,4 @@ Status](https://travis-ci.org/fjammes/kind-travis-ci.svg?branch=master)](https:/
 
 ## Pre-requisites
 
-
+* Active github repository in [Travis-CI](https://travis-ci.org/fjammes/kind-travis-ci)
