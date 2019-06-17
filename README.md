@@ -1,4 +1,4 @@
-# qserv-deploy usage
+# kind-travis-ci
 
 Simple example to setup continous integration for an application running inside Kubernetes.
 
