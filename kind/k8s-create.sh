@@ -3,6 +3,7 @@
 set -e
 set -x
 
+DIR=$(cd "$(dirname "$0")"; pwd -P)
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 CLUSTER_NAME="kind"
@@ -23,7 +24,6 @@ if [ ! -e $KUBECTL_BIN ]; then
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
 kind create cluster --config "$DIR/kind-config.yaml" --name "$CLUSTER_NAME" 
 
 export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
