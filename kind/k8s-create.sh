@@ -11,7 +11,7 @@ CLUSTER_NAME="kind"
 . "$DIR/env.sh"
 
 if [ ! -e $KIND_BIN ]; then
-    curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.3.0/kind-linux-amd64
+    curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.5.1/kind-linux-amd64
     chmod +x /tmp/kind
     sudo mv /tmp/kind "$KIND_BIN"
 fi
