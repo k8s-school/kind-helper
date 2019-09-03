@@ -9,8 +9,8 @@ Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](http
 
 ## Pre-requisites
 
-* Create a github repository dedicated to  continous integration for a given application, for example: https://github.com/GITHUB_ACCOUNT/GITHUB_REPOSITORY
-* Active github repository for travis-ci, see https://travis-ci.org/GITHUB_ACCOUNT/GITHUB_REPOSITORY
+* Create a github repository dedicated to  continous integration for a given application, for example: https://github.com/<GITHUB_ACCOUNT>/<GITHUB_REPOSITORY>
+* Active github repository for travis-ci, see https://travis-ci.org/<GITHUB_ACCOUNT>/<GITHUB_REPOSITORY>
 * Create a container image for the given application and push it to a container registry
  
 ## Setup
