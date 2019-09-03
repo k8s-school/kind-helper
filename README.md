@@ -2,10 +2,10 @@
 
 Simple example to setup continous integration for an application running inside Kubernetes.
 
-Show how to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/fjammes/kind-travis-ci)
+Show how to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci)
 
 [![Build
-Status](https://travis-ci.org/fjammes/kind-travis-ci.svg?branch=master)](https://travis-ci.org/fjammes/kind-travis-ci)
+Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.org/k8s-school/kind-travis-ci)
 
 ## Pre-requisites
 
