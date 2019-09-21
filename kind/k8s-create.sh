@@ -28,8 +28,5 @@ kind create cluster --config "$DIR/kind-config.yaml" --name "$CLUSTER_NAME"
 
 export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
 
-# this for loop waits until kubectl can access the api server that kind has created
-JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'
-until "$KUBECTL_BIN" get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"
-  do sleep 1
-done
+# Wait until KIND cluster nodes are Ready
+kubectl wait --timeout=100s --for=condition=Ready node --all
