@@ -18,8 +18,10 @@ fi
 
 # Download kubectl, which is a requirement for using kind.
 if [ ! -e $KUBECTL_BIN ]; then
-    K8S_VERSION="v1.13.0"
-    curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION"/bin/linux/amd64/kubectl
+    K8S_VERSION_SHORT="1.13"
+    # Retrive latest minor version related to k8s version defined above 
+    K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
     chmod +x /tmp/kubectl
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
