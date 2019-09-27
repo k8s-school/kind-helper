@@ -1,6 +1,6 @@
 # kind-travis-ci
 
-Helpers to install [kind]
+Helpers to install [kind] on a workstation or inside travis-ci.
 
 ![K8s-school Logo](http://k8s-school.fr/images/logo.svg "K8s-school, expertise et formation Kubernetes")
 
