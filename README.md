@@ -2,6 +2,9 @@
 
 Helpers to install [kind] on a workstation or inside travis-ci.
 
+[![Build
+Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.org/k8s-school/kind-travis-ci)
+
 ![K8s-school Logo](http://k8s-school.fr/images/logo.svg "K8s-school, expertise et formation Kubernetes")
 
 ## Run kind on a workstation
@@ -15,8 +18,6 @@ git clone https://github.com/k8s-school/kind-travis-ci
 
 How to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci)
 
-[![Build
-Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.org/k8s-school/kind-travis-ci)
 
 ### Pre-requisites
 
