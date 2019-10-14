@@ -17,6 +17,7 @@ git clone https://github.com/k8s-school/kind-travis-ci
 ## Run kind inside Travis-CI
 
 How to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci)
+Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to get a detailed example.
 
 
 ### Pre-requisites
