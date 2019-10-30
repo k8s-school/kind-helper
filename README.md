@@ -33,3 +33,8 @@ Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to 
 
 
 [kind]:https://github.com/kubernetes-sigs/kind
+
+## Additional resources
+
+* [Blog post](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
+* [Example]:(https://github.com/xmudrii/travis-kind)
