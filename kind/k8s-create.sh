@@ -4,6 +4,38 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
+
+usage() {
+    cat << EOD
+
+Usage: `basename $0` [options]
+
+  Available options:
+    -s           Create a single-master Kubernetes cluster   
+    -h           This message
+
+  Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
+
+EOD
+}
+
+KIND_CONFIG_FILE="$DIR/kind-config.yaml"
+
+# get the options
+while getopts s c ; do
+    case $c in
+        s) KIND_CONFIG_FILE="" ;;
+        \?) usage ; exit 2 ;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+if [ $# -ne 0 ] ; then
+    usage
+    exit 2
+fi
+
+
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 CLUSTER_NAME="kind"
@@ -26,7 +58,11 @@ if [ ! -e $KUBECTL_BIN ]; then
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
 
-kind create cluster --config "$DIR/kind-config.yaml" --name "$CLUSTER_NAME" 
+if [ -z "$KIND_CONFIG_FILE" ]; then
+    kind create cluster --name "$CLUSTER_NAME"
+else
+    kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+fi 
 
 export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
 
