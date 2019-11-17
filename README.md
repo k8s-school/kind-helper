@@ -1,11 +1,11 @@
+[<img src="http://k8s-school.fr/images/logo.svg" alt="K8s-school Logo, expertise et formation Kubernetes" height="50" />](https://k8s-school.fr)
+
 # kind-travis-ci
 
 Helpers to install [kind] on a workstation or inside travis-ci.
 
 [![Build
 Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.org/k8s-school/kind-travis-ci)
-
-![K8s-school Logo](http://k8s-school.fr/images/logo.svg "K8s-school, expertise et formation Kubernetes")
 
 ## Run kind on a workstation
 
