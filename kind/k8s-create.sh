@@ -11,7 +11,7 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
-    -s           Create a single-master Kubernetes cluster   
+    -s           Create a single-master Kubernetes cluster
     -h           This message
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
@@ -51,7 +51,7 @@ fi
 # Download kubectl, which is a requirement for using kind.
 if [ ! -e $KUBECTL_BIN ]; then
     K8S_VERSION_SHORT="1.15"
-    # Retrive latest minor version related to k8s version defined above 
+    # Retrive latest minor version related to k8s version defined above
     K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
     curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
     chmod +x /tmp/kubectl
@@ -62,7 +62,7 @@ if [ -z "$KIND_CONFIG_FILE" ]; then
     kind create cluster --name "$CLUSTER_NAME"
 else
     kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
-fi 
+fi
 
 export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
 
