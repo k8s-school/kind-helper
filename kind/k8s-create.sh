@@ -39,19 +39,22 @@ fi
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 CLUSTER_NAME="kind"
+KIND_VERSION="v0.6.0" 
 
 . "$DIR/env.sh"
 
+# TODO: If kind exists, compare current version to desired one: kind version | awk '{print $2}'
 if [ ! -e $KIND_BIN ]; then
-    curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.5.1/kind-linux-amd64
+    curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/"$KIND_VERSION"/kind-linux-amd64
     chmod +x /tmp/kind
     sudo mv /tmp/kind "$KIND_BIN"
 fi
 
 # Download kubectl, which is a requirement for using kind.
+# TODO If kubectl exists, compare current version to desired one: kubectl version --client --short  | awk '{print $3}'
 if [ ! -e $KUBECTL_BIN ]; then
-    K8S_VERSION_SHORT="1.15"
-    # Retrive latest minor version related to k8s version defined above
+    K8S_VERSION_SHORT="1.16"
+    # Retrive latest minor version related to k8s version defined above 
     K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
     curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
     chmod +x /tmp/kubectl
@@ -64,7 +67,7 @@ else
     kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 fi
 
-export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
+# export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
 
 # Wait until KIND cluster nodes are Ready
 kubectl wait --timeout=100s --for=condition=Ready node --all
