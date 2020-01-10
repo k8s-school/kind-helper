@@ -11,8 +11,6 @@ abs_path() {
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 BASE=$(abs_path "$DIR/..")
 
-export KUBECONFIG="$(kind get kubeconfig-path)"
-
 # Launch application to test here
 "$BASE"/run.sh
 

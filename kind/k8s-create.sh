@@ -67,7 +67,5 @@ else
     kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 fi
 
-# export KUBECONFIG=$(kind get kubeconfig-path --name="$CLUSTER_NAME")
-
 # Wait until KIND cluster nodes are Ready
 kubectl wait --timeout=100s --for=condition=Ready node --all
