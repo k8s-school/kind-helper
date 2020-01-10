@@ -39,7 +39,7 @@ fi
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 CLUSTER_NAME="kind"
-KIND_VERSION="v0.6.0" 
+KIND_VERSION="v0.6.1" 
 
 . "$DIR/env.sh"
 
