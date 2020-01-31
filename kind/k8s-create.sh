@@ -1,7 +1,6 @@
 #!/bin/sh
 
-set -e
-set -x
+set -eux
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -11,7 +10,7 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
-    -s           Create a single-master Kubernetes cluster
+    -s           Create a single-master Kubernetes cluster, with canal CNI
     -h           This message
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
@@ -21,10 +20,12 @@ EOD
 
 KIND_CONFIG_FILE="$DIR/kind-config.yaml"
 
+CANAL=false
+
 # get the options
 while getopts s c ; do
     case $c in
-        s) KIND_CONFIG_FILE="" ;;
+        s) KIND_CONFIG_FILE="$DIR/kind-config-canal.yaml" ; CANAL=true ;;
         \?) usage ; exit 2 ;;
     esac
 done
@@ -39,11 +40,18 @@ fi
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 CLUSTER_NAME="kind"
-KIND_VERSION="v0.6.1" 
+KIND_VERSION="v0.7.0" 
 
 . "$DIR/env.sh"
 
-# TODO: If kind exists, compare current version to desired one: kind version | awk '{print $2}'
+# If kind exists, compare current version to desired one: kind version | awk '{print $2}'
+ if [ -e $KIND_BIN ]; then
+    CURRENT_KIND_VERSION="v$(kind version -q)"
+    if [ "$CURRENT_KIND_VERSION" != "$KIND_VERSION" ]; then
+      sudo rm "$KIND_BIN"
+    fi
+fi
+
 if [ ! -e $KIND_BIN ]; then
     curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/"$KIND_VERSION"/kind-linux-amd64
     chmod +x /tmp/kind
@@ -61,10 +69,12 @@ if [ ! -e $KUBECTL_BIN ]; then
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
 
-if [ -z "$KIND_CONFIG_FILE" ]; then
-    kind create cluster --name "$CLUSTER_NAME"
-else
+if [ -n "$KIND_CONFIG_FILE" ]; then
     kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+fi
+
+if [ $CANAL = true ]; then
+    kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/canal.yaml
 fi
 
 # Wait until KIND cluster nodes are Ready
