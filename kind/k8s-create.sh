@@ -10,7 +10,8 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
-    -s           Create a single-master Kubernetes cluster, with canal CNI
+    -s           Create a single-master Kubernetes cluster
+    -c           Create a single-master Kubernetes cluster, with canal CNI
     -h           This message
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
@@ -23,8 +24,9 @@ KIND_CONFIG_FILE="$DIR/kind-config.yaml"
 CANAL=false
 
 # get the options
-while getopts s c ; do
+while getopts cs c ; do
     case $c in
+        s) KIND_CONFIG_FILE="$DIR/kind-config-single.yaml";;
         s) KIND_CONFIG_FILE="$DIR/kind-config-canal.yaml" ; CANAL=true ;;
         \?) usage ; exit 2 ;;
     esac
