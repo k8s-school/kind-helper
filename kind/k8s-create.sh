@@ -19,15 +19,16 @@ Usage: `basename $0` [options]
 EOD
 }
 
-KIND_CONFIG_FILE="$DIR/kind-config.yaml"
+KIND_CONFIG_FILE="$(mktemp)"
 
+SINGLE=false
 CANAL=false
 
 # get the options
 while getopts cs c ; do
     case $c in
-        s) KIND_CONFIG_FILE="$DIR/kind-config-single.yaml";;
-        s) KIND_CONFIG_FILE="$DIR/kind-config-canal.yaml" ; CANAL=true ;;
+        s) SINGLE=true ;;
+        c) CANAL=true ;;
         \?) usage ; exit 2 ;;
     esac
 done
@@ -70,10 +71,32 @@ if [ ! -e $KUBECTL_BIN ]; then
     chmod +x /tmp/kubectl
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
+cat > "$KIND_CONFIG_FILE" <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+EOF
 
-if [ -n "$KIND_CONFIG_FILE" ]; then
-    kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+if [ $CANAL = true ]; then
+cat >> "$KIND_CONFIG_FILE" <<EOF
+networking:
+  disableDefaultCNI: true # disable kindnet
+  podSubnet: 10.244.0.0/16 # set to Canal's default subnet
+EOF
 fi
+
+if [ $SINGLE = false ]; then
+cat >> "$KIND_CONFIG_FILE" <<EOF
+nodes:
+- role: control-plane
+- role: worker
+- role: worker
+EOF
+fi
+
+echo "Kind configuration file ($KIND_CONFIG_FILE): "
+cat "$KIND_CONFIG_FILE"
+
+kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
 if [ $CANAL = true ]; then
     kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/canal.yaml
