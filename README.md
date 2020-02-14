@@ -5,7 +5,7 @@
 Helpers to install [kind] on a workstation or inside travis-ci.
 
 [![Build
-Status](https://travis-ci.org/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.org/k8s-school/kind-travis-ci)
+Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.com/k8s-school/kind-travis-ci)
 
 ## Run kind on a workstation
 
