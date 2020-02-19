@@ -12,6 +12,7 @@ Usage: `basename $0` [options]
   Available options:
     -s           Create a single-master Kubernetes cluster
     -c           Create a single-master Kubernetes cluster, with canal CNI
+    -n           Set name for Kubernetes cluster 
     -h           This message
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
@@ -23,12 +24,14 @@ KIND_CONFIG_FILE="$(mktemp)"
 
 SINGLE=false
 CANAL=false
+CLUSTER_NAME="kind"
 
 # get the options
 while getopts cs c ; do
     case $c in
         s) SINGLE=true ;;
         c) CANAL=true ;;
+        n) CLUSTER_NAME="$OPTARG" ;; 
         \?) usage ; exit 2 ;;
     esac
 done
@@ -42,10 +45,7 @@ fi
 
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
-CLUSTER_NAME="kind"
 KIND_VERSION="v0.7.0" 
-
-. "$DIR/env.sh"
 
 # If kind exists, compare current version to desired one: kind version | awk '{print $2}'
  if [ -e $KIND_BIN ]; then
