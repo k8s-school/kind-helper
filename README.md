@@ -17,7 +17,7 @@ git clone https://github.com/k8s-school/kind-travis-ci
 ## Run kind inside Travis-CI
 
 How to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci)
-Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to get a detailed example.
+Check this [tutorial: build a Kubernetes CI with Kind](https://k8s-school.fr/resources/en/blog/k8s-ci/) in order to get a detailed example.
 
 
 ### Pre-requisites
@@ -34,7 +34,6 @@ Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to 
 
 [kind]:https://github.com/kubernetes-sigs/kind
 
-## Additional resources
+## Additional resource
 
-* [Tutorial: build a Kubernetes CI with Kind](https://k8s-school.fr/resources/en/blog/k8s-ci/)
 * [Blog post: running Kubernetes in the ci pipeline](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
