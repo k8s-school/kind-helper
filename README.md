@@ -11,7 +11,15 @@ Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](http
 
 ```shell
 git clone https://github.com/k8s-school/kind-travis-ci
+
+# Run a 3 nodes k8s cluster with kind 
 ./kind-travis-ci/kind/k8s-create.sh
+
+# Run a single node k8s cluster with kind
+./kind-travis-ci/kind/k8s-create.sh -s
+
+# Run a k8s cluster with canal CNI, in order to enable NetworkPolicies inside kind
+./kind-travis-ci/kind/k8s-create.sh -c
 ```
 
 ## Run kind inside Travis-CI
