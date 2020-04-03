@@ -2,7 +2,7 @@
 
 # kind-travis-ci
 
-Helpers to install [kind] on a workstation or inside travis-ci.
+Helpers to install [kind] on a workstation or inside a virtual machine launch by a  CI/CD platform.
 
 [![Build
 Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.com/k8s-school/kind-travis-ci)
