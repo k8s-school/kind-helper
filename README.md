@@ -36,5 +36,5 @@ Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to 
 
 ## Additional resources
 
-* [Blog post](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
-* [Example](https://github.com/xmudrii/travis-kind)
+* [Tutorial: build a Kubernetes CI with Kind](https://k8s-school.fr/resources/en/blog/k8s-ci/)
+* [Blog post: running Kubernetes in the ci pipeline](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
