@@ -27,7 +27,7 @@ CANAL=false
 CLUSTER_NAME="kind"
 
 # get the options
-while getopts cs c ; do
+while getopts cn:s c ; do
     case $c in
         s) SINGLE=true ;;
         c) CANAL=true ;;

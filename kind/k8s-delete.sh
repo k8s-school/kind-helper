@@ -22,7 +22,7 @@ EOD
 CLUSTER_NAME="kind"
 
 # get the options
-while getopts cs c ; do
+while getopts cn:s c ; do
     case $c in
         n) CLUSTER_NAME="$OPTARG" ;; 
         \?) usage ; exit 2 ;;
