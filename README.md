@@ -9,7 +9,7 @@ Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](http
 
 Support kind v0.7.0 and k8s v1.18
 
-## Run kind on a workstation
+## Run kind on a workstation, in two lines of code
 
 ```shell
 git clone https://github.com/k8s-school/kind-travis-ci
