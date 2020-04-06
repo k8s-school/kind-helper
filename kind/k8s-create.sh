@@ -25,6 +25,8 @@ KIND_CONFIG_FILE="$(mktemp)"
 SINGLE=false
 CANAL=false
 CLUSTER_NAME="kind"
+# Available node images: https://github.com/kubernetes-sigs/kind/releases
+NODE_IMAGE="kindest/node:v1.18.0@sha256:0e20578828edd939d25eb98496a685c76c98d54084932f76069f886ec315d694"
 
 # get the options
 while getopts cn:s c ; do
@@ -64,7 +66,7 @@ fi
 # Download kubectl, which is a requirement for using kind.
 # TODO If kubectl exists, compare current version to desired one: kubectl version --client --short  | awk '{print $3}'
 if [ ! -e $KUBECTL_BIN ]; then
-    K8S_VERSION_SHORT="1.16"
+    K8S_VERSION_SHORT="1.18"
     # Retrive latest minor version related to k8s version defined above 
     K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
     curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
@@ -96,7 +98,7 @@ fi
 echo "Kind configuration file ($KIND_CONFIG_FILE): "
 cat "$KIND_CONFIG_FILE"
 
-kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME" --image "$NODE_IMAGE"
 
 if [ $CANAL = true ]; then
     kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/canal.yaml

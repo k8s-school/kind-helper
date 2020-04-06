@@ -2,7 +2,7 @@
 
 # kind-travis-ci
 
-Helpers to install [kind] on a workstation or inside travis-ci.
+Helpers to install [kind] on a workstation or inside a virtual machine launch by a  CI/CD platform.
 
 [![Build
 Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.com/k8s-school/kind-travis-ci)
@@ -11,14 +11,21 @@ Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](http
 
 ```shell
 git clone https://github.com/k8s-school/kind-travis-ci
+
+# Run a 3 nodes k8s cluster with kind 
 ./kind-travis-ci/kind/k8s-create.sh
+
+# Run a single node k8s cluster with kind
+./kind-travis-ci/kind/k8s-create.sh -s
+
+# Run a k8s cluster with canal CNI, in order to enable NetworkPolicies inside kind
+./kind-travis-ci/kind/k8s-create.sh -c
 ```
 
 ## Run kind inside Travis-CI
 
-How to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci)
-Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to get a detailed example.
 
+Check this **[tutorial: build a Kubernetes CI with Kind](https://k8s-school.fr/resources/en/blog/k8s-ci/)** in order to learn how to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-travis-ci).
 
 ### Pre-requisites
 
@@ -34,7 +41,6 @@ Check this blog post: https://k8s-school.fr/resources/blog/2-k8s-ci in order to 
 
 [kind]:https://github.com/kubernetes-sigs/kind
 
-## Additional resources
+## Additional resource
 
-* [Blog post](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
-* [Example](https://github.com/xmudrii/travis-kind)
+* [Blog post: running Kubernetes in the ci pipeline](https://www.loodse.com/blog/2019-03-12-running-kubernetes-in-the-ci-pipeline-/)
