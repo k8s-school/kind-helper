@@ -7,7 +7,9 @@ Helpers to install [kind] on a workstation or inside a virtual machine launch by
 [![Build
 Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.com/k8s-school/kind-travis-ci)
 
-## Run kind on a workstation
+Support kind v0.7.0 and k8s v1.18
+
+## Run kind on a workstation, in two lines of code
 
 ```shell
 git clone https://github.com/k8s-school/kind-travis-ci
