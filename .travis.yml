@@ -3,8 +3,8 @@ language: minimal
 dist: bionic 
 
 before_script:
-  - ./kind/k8s-create.sh -s
+  - ./k8s-create.sh -s
 
 script:
-  - ./kind/launch.sh
+  - ./launch.sh
 

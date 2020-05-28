@@ -1,24 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
-set -x
-
-abs_path() {
-  # $1 : relative filename
-  echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-}
+set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-BASE=$(abs_path "$DIR/..")
 
 # Launch application to test here
-"$BASE"/run.sh
+"$DIR"/run.sh
 
 echo "Pods are up:"
 kubectl get pods
 
 # Launch application integration test here
-"$BASE"/test.sh
+"$DIR"/test.sh
 
 # TODO Add strong check for startup
 sleep 10
