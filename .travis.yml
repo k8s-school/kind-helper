@@ -6,5 +6,5 @@ before_script:
   - ./k8s-create.sh -s
 
 script:
-  - ./launch.sh
+  - ./tests/launch.sh
 
