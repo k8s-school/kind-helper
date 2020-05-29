@@ -25,8 +25,6 @@ KIND_CONFIG_FILE="$(mktemp)"
 SINGLE=false
 CANAL=false
 CLUSTER_NAME="kind"
-# Available node images: https://github.com/kubernetes-sigs/kind/releases
-NODE_IMAGE="kindest/node:v1.18.0@sha256:0e20578828edd939d25eb98496a685c76c98d54084932f76069f886ec315d694"
 
 # get the options
 while getopts cn:s c ; do
@@ -98,7 +96,7 @@ fi
 echo "Kind configuration file ($KIND_CONFIG_FILE): "
 cat "$KIND_CONFIG_FILE"
 
-kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME" --image "$NODE_IMAGE"
+kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
 if [ $CANAL = true ]; then
     kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/canal.yaml
