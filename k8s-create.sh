@@ -99,7 +99,7 @@ cat "$KIND_CONFIG_FILE"
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
 if [ $CANAL = true ]; then
-    kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/canal.yaml
+    kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
 fi
 
 # Wait until KIND cluster nodes are Ready
