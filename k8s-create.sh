@@ -23,14 +23,14 @@ EOD
 KIND_CONFIG_FILE="$(mktemp)"
 
 SINGLE=false
-CILIUM=false
+CANAL=false
 CLUSTER_NAME="kind"
 
 # get the options
 while getopts cn:s c ; do
     case $c in
         s) SINGLE=true ;;
-        c) CILIUM=true ;;
+        c) CANAL=true ;;
         n) CLUSTER_NAME="$OPTARG" ;; 
         \?) usage ; exit 2 ;;
     esac
@@ -76,10 +76,11 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 EOF
 
-if [ $CILIUM = true ]; then
+if [ $CANAL = true ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 networking:
   disableDefaultCNI: true # disable kindnet
+  podSubnet: 10.244.0.0/16 # set to Canal's default subnet
 EOF
 fi
 
@@ -97,8 +98,8 @@ cat "$KIND_CONFIG_FILE"
 
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
-if [ "$CILIUM" = true ]; then
-  kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml
+if [ $CANAL = true ]; then
+    kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
 fi
 
 # Wait until KIND cluster nodes are Ready
