@@ -23,7 +23,7 @@ EOD
 KIND_CONFIG_FILE="$(mktemp)"
 
 SINGLE=false
-CANAL=false
+CILIUM=false
 CLUSTER_NAME="kind"
 
 # get the options
@@ -76,7 +76,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 EOF
 
-if [ $CANAL = true ]; then
+if [ $CILIUM = true ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 networking:
   disableDefaultCNI: true # disable kindnet
