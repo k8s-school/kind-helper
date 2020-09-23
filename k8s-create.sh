@@ -11,7 +11,7 @@ Usage: `basename $0` [options]
 
   Available options:
     -s           Create a single-master Kubernetes cluster
-    -c           Create a single-master Kubernetes cluster, with canal CNI
+    -c <cni>     Use alternate CNI, 'canal' and 'cilium' are supported
     -n           Set name for Kubernetes cluster 
     -h           This message
 
@@ -23,14 +23,14 @@ EOD
 KIND_CONFIG_FILE="$(mktemp)"
 
 SINGLE=false
-CANAL=false
+CNI=""
 CLUSTER_NAME="kind"
 
 # get the options
-while getopts cn:s c ; do
+while getopts c:n:s c ; do
     case $c in
         s) SINGLE=true ;;
-        c) CANAL=true ;;
+        c) CNI="$OPTARG" ;;
         n) CLUSTER_NAME="$OPTARG" ;; 
         \?) usage ; exit 2 ;;
     esac
@@ -76,7 +76,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 EOF
 
-if [ $CANAL = true ]; then
+if [ -n "$CNI" ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 networking:
   disableDefaultCNI: true # disable kindnet
@@ -98,8 +98,14 @@ cat "$KIND_CONFIG_FILE"
 
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
-if [ $CANAL = true ]; then
-    kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
+if [ "$CNI" = "canal" ]; then
+  kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
+elif [ "$CNI" = "cilium" ]; then
+  kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml*
+elif
+  >&2 echo "Incorrect CNI option: $CNI"
+  usage
+  exit 2
 fi
 
 # Wait until KIND cluster nodes are Ready
