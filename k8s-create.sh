@@ -101,8 +101,8 @@ kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 if [ "$CNI" = "canal" ]; then
   kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
 elif [ "$CNI" = "cilium" ]; then
-  kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml*
-elif
+  kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml
+elif [ -n "$CNI" ]; then
   >&2 echo "Incorrect CNI option: $CNI"
   usage
   exit 2
