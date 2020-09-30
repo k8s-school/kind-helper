@@ -128,4 +128,4 @@ elif [ -n "$CNI" ]; then
 fi
 
 # Wait until KIND cluster nodes are Ready
-kubectl wait --timeout=100s --for=condition=Ready node --all
+kubectl wait --timeout=180s --for=condition=Ready node --all
