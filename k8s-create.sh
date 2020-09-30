@@ -22,13 +22,15 @@ EOD
 
 KIND_CONFIG_FILE="$(mktemp)"
 
-SINGLE=false
 CNI=""
 CLUSTER_NAME="kind"
+PSP=true
+SINGLE=false
 
 # get the options
-while getopts c:n:s c ; do
+while getopts c:n:sp c ; do
     case $c in
+        p) PSP=true ;;
         s) SINGLE=true ;;
         c) CNI="$OPTARG" ;;
         n) CLUSTER_NAME="$OPTARG" ;; 
@@ -41,7 +43,6 @@ if [ $# -ne 0 ] ; then
     usage
     exit 2
 fi
-
 
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
@@ -84,7 +85,21 @@ networking:
 EOF
 fi
 
-if [ $SINGLE = false ]; then
+if [ "$PSP" = true ]; then
+cat >> "$KIND_CONFIG_FILE" <<EOF
+kubeadmConfigPatches:
+- |
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  apiServer:
+    extraArgs:
+      enable-admission-plugins: NodeRestriction,PodSecurityPolicy
+EOF
+fi
+
+if [ "$SINGLE" = false ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 nodes:
 - role: control-plane
@@ -97,6 +112,10 @@ echo "Kind configuration file ($KIND_CONFIG_FILE): "
 cat "$KIND_CONFIG_FILE"
 
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+
+if [ "$PSP" = true ]; then
+  kubectl apply -f $DIR/psp
+fi
 
 if [ "$CNI" = "canal" ]; then
   kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
