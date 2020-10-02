@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -eux
+set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -24,7 +24,7 @@ KIND_CONFIG_FILE="$(mktemp)"
 
 CNI=""
 CLUSTER_NAME="kind"
-PSP=true
+PSP=false
 SINGLE=false
 
 # get the options
