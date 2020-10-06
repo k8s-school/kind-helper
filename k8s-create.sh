@@ -10,6 +10,7 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
+    -p           Enable PodSecurityPolicies
     -s           Create a single-master Kubernetes cluster
     -c <cni>     Use alternate CNI, 'canal' and 'cilium' are supported
     -n           Set name for Kubernetes cluster 
