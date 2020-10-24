@@ -125,7 +125,7 @@ if [ "$CNI" = "canal" ]; then
   curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CANAL_FILE"
 
   # Pull canal images from public registry to local host then load them to kind cluster nodes
-  for image in $(grep "image:" "$DIR/$CANAL_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image done;
+  for image in $(grep "image:" "$DIR/$CANAL_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
 
   kubectl apply -f $CANAL_FILE
 elif [ "$CNI" = "cilium" ]; then
