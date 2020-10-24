@@ -70,7 +70,7 @@ fi
 # TODO If kubectl exists, compare current version to desired one: kubectl version --client --short  | awk '{print $3}'
 if [ ! -e $KUBECTL_BIN ]; then
     K8S_VERSION_SHORT="1.19"
-    # Retrive latest minor version related to k8s version defined above 
+    # Retrieve latest minor version related to k8s version defined above 
     K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
     curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
     chmod +x /tmp/kubectl
@@ -129,7 +129,9 @@ if [ "$CNI" = "canal" ]; then
 
   kubectl apply -f $CANAL_FILE
 elif [ "$CNI" = "cilium" ]; then
-  kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml
+  curl -Lo cilium.yaml https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml
+  for image in $(grep " image:" "$DIR/cilium.yaml" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
+  kubectl create -f cilium.yaml
 elif [ "$CNI" = "calico" ]; then 
   curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CALICO_FILE"
   sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$CALICO_FILE"
