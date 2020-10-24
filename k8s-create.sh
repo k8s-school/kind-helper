@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -eux
+set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -10,6 +10,7 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
+    -p           Enable PodSecurityPolicies
     -s           Create a single-master Kubernetes cluster
     -c <cni>     Use alternate CNI, 'canal', 'calico' and 'cilium' are supported
     -n           Set name for Kubernetes cluster 
@@ -22,16 +23,18 @@ EOD
 
 KIND_CONFIG_FILE="$(mktemp)"
 
-SINGLE=false
 CNI=""
 CLUSTER_NAME="kind"
 POD_CIDR="10.244.0.0/16"
 CALICO_FILE="calico.yaml"
 CANAL_FILE="canal.yaml"
+PSP=false
+SINGLE=false
 
 # get the options
-while getopts c:n:s c ; do
+while getopts c:n:sp c ; do
     case $c in
+        p) PSP=true ;;
         s) SINGLE=true ;;
         c) CNI="$OPTARG" ;;
         n) CLUSTER_NAME="$OPTARG" ;; 
@@ -44,7 +47,6 @@ if [ $# -ne 0 ] ; then
     usage
     exit 2
 fi
-
 
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
@@ -87,7 +89,21 @@ networking:
 EOF
 fi
 
-if [ $SINGLE = false ]; then
+if [ "$PSP" = true ]; then
+cat >> "$KIND_CONFIG_FILE" <<EOF
+kubeadmConfigPatches:
+- |
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  apiServer:
+    extraArgs:
+      enable-admission-plugins: NodeRestriction,PodSecurityPolicy
+EOF
+fi
+
+if [ "$SINGLE" = false ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 nodes:
 - role: control-plane
@@ -100,6 +116,10 @@ echo "Kind configuration file ($KIND_CONFIG_FILE): "
 cat "$KIND_CONFIG_FILE"
 
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
+
+if [ "$PSP" = true ]; then
+  kubectl apply -f $DIR/psp
+fi
 
 if [ "$CNI" = "canal" ]; then
   curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CANAL_FILE"
@@ -125,4 +145,4 @@ elif [ -n "$CNI" ]; then
 fi
 
 # Wait until KIND cluster nodes are Ready
-kubectl wait --timeout=100s --for=condition=Ready node --all
+kubectl wait --timeout=180s --for=condition=Ready node --all
