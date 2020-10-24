@@ -135,7 +135,7 @@ elif [ "$CNI" = "calico" ]; then
   sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$CALICO_FILE"
   for container_id in $(docker ps --filter name=kind -q); do docker exec -i $container_id sysctl net.ipv4.conf.all.rp_filter=1; done;
   # Pull calico images from public registry to local host then load them to kind cluster nodes
-  for image in $(grep "image:" "$DIR/$CALICO_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image done;
+  for image in $(grep "image:" "$DIR/$CALICO_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
 
   kubectl apply -f $CALICO_FILE
 elif [ -n "$CNI" ]; then
