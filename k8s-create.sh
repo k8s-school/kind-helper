@@ -11,7 +11,7 @@ Usage: `basename $0` [options]
 
   Available options:
     -s           Create a single-master Kubernetes cluster
-    -c <cni>     Use alternate CNI, 'canal' and 'cilium' are supported
+    -c <cni>     Use alternate CNI, 'canal', 'calico' and 'cilium' are supported
     -n           Set name for Kubernetes cluster 
     -h           This message
 
@@ -25,6 +25,9 @@ KIND_CONFIG_FILE="$(mktemp)"
 SINGLE=false
 CNI=""
 CLUSTER_NAME="kind"
+POD_CIDR="10.244.0.0/16"
+CALICO_FILE="calico.yaml"
+CANAL_FILE="canal.yaml"
 
 # get the options
 while getopts c:n:s c ; do
@@ -80,7 +83,7 @@ if [ -n "$CNI" ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 networking:
   disableDefaultCNI: true # disable kindnet
-  podSubnet: 10.244.0.0/16 # set to Canal's default subnet
+  podSubnet: "$POD_CIDR" # set to Canal/Calico's default subnet
 EOF
 fi
 
@@ -99,9 +102,22 @@ cat "$KIND_CONFIG_FILE"
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
 if [ "$CNI" = "canal" ]; then
-  kubectl apply -f https://docs.projectcalico.org/v3.16/manifests/canal.yaml
+  curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CANAL_FILE"
+
+  # Pull canal images from public registry to local host then load them to kind cluster nodes
+  for image in $(grep "image:" "$DIR/$CANAL_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image done;
+
+  kubectl apply -f $CANAL_FILE
 elif [ "$CNI" = "cilium" ]; then
   kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml
+elif [ "$CNI" = "calico" ]; then 
+  curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CALICO_FILE"
+  sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$CALICO_FILE"
+  for container_id in $(docker ps --filter name=kind -q); do docker exec -i $container_id sysctl net.ipv4.conf.all.rp_filter=1; done;
+  # Pull calico images from public registry to local host then load them to kind cluster nodes
+  for image in $(grep "image:" "$DIR/$CALICO_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image done;
+
+  kubectl apply -f $CALICO_FILE
 elif [ -n "$CNI" ]; then
   >&2 echo "Incorrect CNI option: $CNI"
   usage
