@@ -25,6 +25,10 @@ git clone https://github.com/k8s-school/kind-travis-ci
 
 # Run a k8s cluster with Cilium CNI
 ./kind-travis-ci/kind/k8s-create.sh -c cilium
+
+# Run a k8s cluster with Calico CNI
+./kind-travis-ci/kind/k8s-create.sh -c calico
+
 ```
 
 ## Run kind inside Travis-CI
