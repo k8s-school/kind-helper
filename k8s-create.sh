@@ -89,7 +89,11 @@ networking:
 EOF
 fi
 
+ADMISSION_PLUGINS="enable-admission-plugins: NodeRestriction,ResourceQuota"
 if [ "$PSP" = true ]; then
+   ADMISSION_PLUGINS="$ADMISSION_PLUGINS,PodSecurityPolicy" 
+fi
+
 cat >> "$KIND_CONFIG_FILE" <<EOF
 kubeadmConfigPatches:
 - |
@@ -99,9 +103,8 @@ kubeadmConfigPatches:
     name: config
   apiServer:
     extraArgs:
-      enable-admission-plugins: NodeRestriction,PodSecurityPolicy
+      $ADMISSION_PLUGINS
 EOF
-fi
 
 if [ "$SINGLE" = false ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF

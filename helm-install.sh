@@ -6,7 +6,7 @@ set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
-HELM_VERSION="3.0.2"
+HELM_VERSION="3.3.3"
 wget -O /tmp/helm.tgz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
 
 cd /tmp
