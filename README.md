@@ -14,11 +14,11 @@ Support kind v0.9.0 and k8s v1.19
 ```shell
 git clone https://github.com/k8s-school/kind-travis-ci
 
-# Run a 3 nodes k8s cluster with kind 
-./kind-travis-ci/k8s-create.sh
-
 # Run a single node k8s cluster with kind
 ./kind-travis-ci/k8s-create.sh -s
+
+# Run a 3 nodes k8s cluster with kind 
+./kind-travis-ci/k8s-create.sh
 
 # Run a k8s cluster with Canal CNI, in order to enable NetworkPolicies inside kind
 ./kind-travis-ci/k8s-create.sh -c canal
@@ -28,6 +28,9 @@ git clone https://github.com/k8s-school/kind-travis-ci
 
 # Run a k8s cluster with Calico CNI
 ./kind-travis-ci/k8s-create.sh -c calico
+
+# Delete the kind cluster
+./kind-travis-ci/k8s-delete.sh
 
 ```
 
