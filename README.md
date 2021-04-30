@@ -4,7 +4,8 @@
 
 Helpers to install [kind] on a workstation or inside a virtual machine launch by a  CI/CD platform.
 
-[![Build Status](https://travis-ci.com/k8s-school/kind-helper.svg?branch=master)](https://travis-ci.com/k8s-school/kind-helper)
+
+[![CI Status](https://github.com/k8s-school/kind-helper/workflows/CI/badge.svg?branch=master)](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
 
 Support kind v0.9.0 and k8s v1.19
 
