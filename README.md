@@ -1,36 +1,35 @@
 [<img src="http://k8s-school.fr/images/logo.svg" alt="K8s-school Logo, expertise et formation Kubernetes" height="50" />](https://k8s-school.fr)
 
-# kind-travis-ci
+# kind-helper
 
 Helpers to install [kind] on a workstation or inside a virtual machine launch by a  CI/CD platform.
 
-[![Build
-Status](https://travis-ci.com/k8s-school/kind-travis-ci.svg?branch=master)](https://travis-ci.com/k8s-school/kind-travis-ci)
+[![Build Status](https://travis-ci.com/k8s-school/kind-helper.svg?branch=master)](https://travis-ci.com/k8s-school/kind-helper)
 
 Support kind v0.9.0 and k8s v1.19
 
 ## Run kind on a workstation, in two lines of code
 
 ```shell
-git clone https://github.com/k8s-school/kind-travis-ci
+git clone https://github.com/k8s-school/kind-helper
 
 # Run a single node k8s cluster with kind
-./kind-travis-ci/k8s-create.sh -s
+./kind-helper/k8s-create.sh -s
 
 # Run a 3 nodes k8s cluster with kind 
-./kind-travis-ci/k8s-create.sh
+./kind-helper/k8s-create.sh
 
 # Run a k8s cluster with Canal CNI, in order to enable NetworkPolicies inside kind
-./kind-travis-ci/k8s-create.sh -c canal
+./kind-helper/k8s-create.sh -c canal
 
 # Run a k8s cluster with Cilium CNI
-./kind-travis-ci/k8s-create.sh -c cilium
+./kind-helper/k8s-create.sh -c cilium
 
 # Run a k8s cluster with Calico CNI
-./kind-travis-ci/k8s-create.sh -c calico
+./kind-helper/k8s-create.sh -c calico
 
 # Delete the kind cluster
-./kind-travis-ci/k8s-delete.sh
+./kind-helper/k8s-delete.sh
 
 ```
 
