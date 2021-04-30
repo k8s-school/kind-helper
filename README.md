@@ -2,7 +2,7 @@
 
 # kind-helper
 
-Helpers to install [kind] on a workstation or inside a virtual machine launch by a  CI/CD platform.
+Helpers to install [kind] on any Linux system. Can be used for VMs launched by a  CI/CD platform.
 
 
 [![CI Status](https://github.com/k8s-school/kind-helper/workflows/CI/badge.svg?branch=master)](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
