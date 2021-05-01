@@ -2,7 +2,7 @@
 
 # kind-helper
 
-Helper to install Kubernetes cluster based on [kind] on any Linux system. Allow to easily setup:
+Helper to install Kubernetes clusters, based on [kind], on any Linux system. Allow to easily setup:
 - multi-nodes cluster
 - set CNI plugin and enable NetworkPolicies
 - enable PodSecurityPolicy adminission control plugin.
