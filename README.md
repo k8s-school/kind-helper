@@ -2,12 +2,16 @@
 
 # kind-helper
 
-Helpers to install [kind] on any Linux system. Can be used for VMs launched by a  CI/CD platform.
-
+Helper to install Kubernetes clusters, based on [kind], on any Linux system. Allow to easily setup:
+- multi-nodes cluster
+- set CNI plugin and enable NetworkPolicies
+- enable PodSecurityPolicy adminission control plugin.
+ 
+Can be used for VMs launched by a  CI/CD platform, including [Github Action](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
 
 [![CI Status](https://github.com/k8s-school/kind-helper/workflows/CI/badge.svg?branch=master)](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
 
-Support kind v0.9.0 and k8s v1.19
+Support kind v0.10.0 and k8s v1.20
 
 ## Run kind on a workstation, in two lines of code
 
