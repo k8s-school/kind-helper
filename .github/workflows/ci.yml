@@ -16,6 +16,8 @@ jobs:
       - name: Install k8s using kind
         run: |
           ./k8s-create.sh -s
+          kubectl get pods -n kube-system
+          kubectl get nodes
       - name: Run tests
         run: |
           ./tests/launch.sh
