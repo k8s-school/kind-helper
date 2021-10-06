@@ -3,7 +3,10 @@ kind: PodSecurityPolicy
 metadata:
   name: privileged
   annotations:
-    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    # seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    # apparmor.security.beta.kubernetes.io/allowedProfileNames: '*'
+    # seccomp.security.alpha.kubernetes.io/defaultProfileName:  '*'
+    # apparmor.security.beta.kubernetes.io/defaultProfileName:  '*'
 spec:
   privileged: true
   allowPrivilegeEscalation: true
