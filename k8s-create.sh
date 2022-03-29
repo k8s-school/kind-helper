@@ -138,12 +138,12 @@ elif [ "$CNI" = "cilium" ]; then
   for image in $(grep " image:" "$DIR/cilium.yaml" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
   kubectl create -f cilium.yaml
 elif [ "$CNI" = "calico" ]; then
-  curl -LO https://projectcalico.docs.tigera.io/manifests/"$CALICO_FILE"
-  sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$CALICO_FILE"
+  curl -o $DIR/$CALICO_FILE https://projectcalico.docs.tigera.io/manifests/"$CALICO_FILE"
+  sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$DIR/$CALICO_FILE"
   # Pull calico images from public registry to local host then load them to kind cluster nodes
   for image in $(grep "image:" "$DIR/$CALICO_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
 
-  kubectl apply -f $CALICO_FILE
+  kubectl apply -f $DIR/$CALICO_FILE
 elif [ -n "$CNI" ]; then
   >&2 echo "Incorrect CNI option: $CNI"
   usage
