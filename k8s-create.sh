@@ -138,7 +138,7 @@ elif [ "$CNI" = "cilium" ]; then
   for image in $(grep " image:" "$DIR/cilium.yaml" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
   kubectl create -f cilium.yaml
 elif [ "$CNI" = "calico" ]; then
-  curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CALICO_FILE"
+  curl -LO https://projectcalico.docs.tigera.io/manifests/"$CALICO_FILE"
   sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$CALICO_FILE"
   for container_id in $(docker ps --filter name=kind -q); do docker exec -i $container_id sysctl net.ipv4.conf.all.rp_filter=1; done;
   # Pull calico images from public registry to local host then load them to kind cluster nodes
