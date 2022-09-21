@@ -50,7 +50,7 @@ fi
 
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
-KIND_VERSION="v0.11.1"
+KIND_VERSION="v0.15.0"
 
 # If kind exists, compare current version to desired one: kind version | awk '{print $2}'
  if [ -e $KIND_BIN ]; then
