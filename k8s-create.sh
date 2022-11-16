@@ -10,11 +10,11 @@ usage() {
 Usage: `basename $0` [options]
 
   Available options:
-    -p           Enable PodSecurityPolicies
-    -s           Create a single-master Kubernetes cluster
     -c <cni>     Use alternate CNI, 'canal', 'calico' and 'cilium' are supported
+    -N           Number of workers, default to 2
     -n           Set name for Kubernetes cluster
     -h           This message
+    -s           Create a single-master Kubernetes cluster, take precedence over -N option
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
 
@@ -28,14 +28,14 @@ CLUSTER_NAME="kind"
 POD_CIDR="10.244.0.0/16"
 CALICO_FILE="calico.yaml"
 CANAL_FILE="canal.yaml"
-PSP=false
+NB_WORKER=2
 SINGLE=false
 
 # get the options
-while getopts c:n:sp c ; do
+while getopts c:n:N:s c ; do
     case $c in
-        p) PSP=true ;;
         s) SINGLE=true ;;
+        N) NB_WORKER="$OPTARG" ;;
         c) CNI="$OPTARG" ;;
         n) CLUSTER_NAME="$OPTARG" ;;
         \?) usage ; exit 2 ;;
@@ -51,6 +51,7 @@ fi
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 KIND_VERSION="v0.15.0"
+KUBECTL_VERSION="v1.25.0"
 
 # If kind exists, compare current version to desired one: kind version | awk '{print $2}'
  if [ -e $KIND_BIN ]; then
@@ -69,10 +70,9 @@ fi
 # Download kubectl, which is a requirement for using kind.
 # TODO If kubectl exists, compare current version to desired one: kubectl version --client --short  | awk '{print $3}'
 if [ ! -e $KUBECTL_BIN ]; then
-    K8S_VERSION_SHORT="1.19"
-    # Retrieve latest minor version related to k8s version defined above
-    K8S_VERSION_LONG=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable-$K8S_VERSION_SHORT.txt)
-    curl -Lo /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/"$K8S_VERSION_LONG"/bin/linux/amd64/kubectl
+    curl -Lo /tmp/kubectl https://dl.k8s.io/release/"$KUBECTL_VERSION"/bin/linux/amd64/kubectl
+    curl -Lo /tmp/kubectl.sha256 "https://dl.k8s.io/"$KUBECTL_VERSION"/bin/linux/amd64/kubectl.sha256"
+    echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum --check
     chmod +x /tmp/kubectl
     sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
@@ -92,9 +92,6 @@ EOF
 fi
 
 ADMISSION_PLUGINS="enable-admission-plugins: NodeRestriction,ResourceQuota"
-if [ "$PSP" = true ]; then
-   ADMISSION_PLUGINS="$ADMISSION_PLUGINS,PodSecurityPolicy"
-fi
 
 cat >> "$KIND_CONFIG_FILE" <<EOF
 kubeadmConfigPatches:
@@ -112,9 +109,15 @@ if [ "$SINGLE" = false ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 nodes:
 - role: control-plane
-- role: worker
+EOF
+  i=0
+  until [ $i -ge $NB_WORKER ]
+  do
+  cat >> "$KIND_CONFIG_FILE" <<EOF
 - role: worker
 EOF
+    ((i=i+1))
+  done
 fi
 
 echo "Kind configuration file ($KIND_CONFIG_FILE): "
@@ -122,16 +125,12 @@ cat "$KIND_CONFIG_FILE"
 
 kind create cluster --config "$KIND_CONFIG_FILE" --name "$CLUSTER_NAME"
 
-if [ "$PSP" = true ]; then
-  kubectl apply -f $DIR/psp
-fi
-
 if [ "$CNI" = "canal" ]; then
   curl -LO https://docs.projectcalico.org/v3.16/manifests/"$CANAL_FILE"
 
   # Pull canal images from public registry to local host then load them to kind cluster nodes
   for image in $(grep "image:" "$DIR/$CANAL_FILE" | awk '{print $2}' | tr -d '"')
-  do 
+  do
     docker pull $image
     kind load docker-image $image --name "$CLUSTER_NAME"
   done
