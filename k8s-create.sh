@@ -11,10 +11,11 @@ Usage: `basename $0` [options]
 
   Available options:
     -c <cni>     Use alternate CNI, 'canal', 'calico' and 'cilium' are supported
-    -N           Number of workers, default to 2
     -n           Set name for Kubernetes cluster
     -h           This message
-    -s           Create a single-master Kubernetes cluster, take precedence over -N option
+    -s           Create a single-node Kubernetes cluster, take precedence over -w option
+    -w           Number of workers, default to 2
+
 
   Creates a Kubernetes cluster based on kind. Default cluster has 1 master and 2 nodes.
 
@@ -32,10 +33,10 @@ NB_WORKER=2
 SINGLE=false
 
 # get the options
-while getopts c:n:N:s c ; do
+while getopts c:n:w:s c ; do
     case $c in
         s) SINGLE=true ;;
-        N) NB_WORKER="$OPTARG" ;;
+        w) NB_WORKER="$OPTARG" ;;
         c) CNI="$OPTARG" ;;
         n) CLUSTER_NAME="$OPTARG" ;;
         \?) usage ; exit 2 ;;
