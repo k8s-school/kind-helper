@@ -26,10 +26,8 @@ KIND_CONFIG_FILE="$(mktemp)"
 
 CNI=""
 CLUSTER_NAME="kind"
-POD_CIDR="10.244.0.0/16"
-CALICO_FILE="calico.yaml"
-CANAL_FILE="canal.yaml"
-NB_WORKER=2
+POD_CIDR="192.168.0.0/16"
+NB_WORKER=3
 SINGLE=false
 
 # get the options
@@ -142,12 +140,9 @@ elif [ "$CNI" = "cilium" ]; then
   for image in $(grep " image:" "$DIR/cilium.yaml" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
   kubectl create -f cilium.yaml
 elif [ "$CNI" = "calico" ]; then
-  curl -o $DIR/$CALICO_FILE https://projectcalico.docs.tigera.io/manifests/"$CALICO_FILE"
-  sed -i -e "s?192.168.0.0/16?$POD_CIDR?g" "$DIR/$CALICO_FILE"
-  # Pull calico images from public registry to local host then load them to kind cluster nodes
-  for image in $(grep "image:" "$DIR/$CALICO_FILE" | awk '{print $2}' | tr -d '"') ; do docker pull $image; kind load docker-image $image; done;
-
-  kubectl apply -f $DIR/$CALICO_FILE
+  kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml
+  kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml
+  kubectl wait --for=condition=ready --timeout=-1s nodes kind-control-plane
 elif [ -n "$CNI" ]; then
   >&2 echo "Incorrect CNI option: $CNI"
   usage
