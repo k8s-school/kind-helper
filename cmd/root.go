@@ -17,25 +17,40 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var cfgFile string
 
+var dryRun bool
+
+var (
+	logger   *zap.SugaredLogger
+	logLevel int
+)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "kind-helper",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A high-level cli on top of kind",
+	Long: `Creates kind-based Kubernetes cluster
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+  # Create a configuration file for kind
+  ./kind-helper configgen
+
+  # Create a single-node cluster using calico CNI
+  ./kind-helper create --single --calico
+
+  # Delete kind cluster
+  ./kind-helper delete
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -51,39 +66,84 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initLogger, initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kind-helper.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "configuration file (default to $HOME/.kind-helper.yaml)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolP("single", "s", false, "create a single node k8s cluster, take precedence over configuration file 'workers' parameter")
+	rootCmd.PersistentFlags().BoolP("calico", "c", false, "install calico CNI, take precedence over configuration file 'usecalico' parameter")
+	viper.BindPFlag("single", rootCmd.PersistentFlags().Lookup("single"))
+	viper.BindPFlag("calico", rootCmd.PersistentFlags().Lookup("calico"))
+}
+
+// setUpLogs set the log output ans the log level
+func initLogger() {
+
+	rawJSON := []byte(`{
+		"level": "debug",
+		"encoding": "console",
+		"outputPaths": ["stdout", "/tmp/logs"],
+		"errorOutputPaths": ["stderr"],
+		"encoderConfig": {
+		  "messageKey": "message",
+		  "levelKey": "level",
+		  "levelEncoder": "lowercase"
+		}
+	  }`)
+
+	var cfg zap.Config
+	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
+		panic(err)
+	}
+	_logger, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+	defer _logger.Sync()
+	logger = _logger.Sugar()
+
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+
+	cwd, err1 := os.Getwd()
+	cobra.CheckErr(err1)
+
+	defaultConfig := `kind:
+  # Sets "127.0.0.1" as an extra Subject Alternative Names (SANs) for the API Server signing certificate.
+  # See https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-APIServer
+  # localcertsans: true
+  # Use calico CNI instead of kindnet
+  # useCalico: true
+  # Number of worker nodes
+  workers: 3`
+
+	viper.AddConfigPath(cwd)
+	viper.AddConfigPath(home)
+	viper.SetConfigType("yaml")
+
+	viper.ReadConfig(strings.NewReader(defaultConfig))
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".kind-helper" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
 		viper.SetConfigName(".kind-helper")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
-
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	if err := viper.MergeInConfig(); err == nil {
+		logger.Debugf("Find user custom configuration %s", viper.ConfigFileUsed())
+	} else {
+		logger.Debugf("Do not find user custom configuration %s", viper.ConfigFileUsed())
 	}
 }

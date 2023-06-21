@@ -4,47 +4,27 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
 )
 
 func deleteCluster() {
 
-	var err_out error
 	cmd_tpl := "kind delete cluster --name %v"
 
 	cmd := fmt.Sprintf(cmd_tpl, "kind")
 
-	out, errout, err := Shellout(cmd)
-	if err != nil {
-		err_msg := fmt.Sprintf("error deleting kind cluster: %v\n", err)
-		err_out = errors.New(err_msg)
-	}
+	ExecCmd(cmd)
 
-	outmsg := OutMsg{
-		cmd:    cmd,
-		err:    err_out,
-		out:    out,
-		errout: errout}
-
-	log.Printf("message: %v\n", outmsg)
 }
 
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Delete a kind cluster",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Delete k8s cluster")
+		logger.Info("Delete kind cluster")
 		deleteCluster()
 	},
 }

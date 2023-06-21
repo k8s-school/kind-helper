@@ -4,75 +4,38 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
-const kindConfigFile = "/tmp/kind-config.yaml"
-
-func createKindConfig() {
-	f, e := os.Create(kindConfigFile)
-	if e != nil {
-		log.Fatal(e)
-	}
-	defer f.Close()
-	log.Println(f)
-
-	kindconfig := `kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-featureGates:
-  "EphemeralContainers": true
-kubeadmConfigPatches:
-- |
-  apiVersion: kubeadm.k8s.io/v1beta2
-  kind: ClusterConfiguration
-  metadata:
-    name: config
-  apiServer:
-    certSANs:
-    - "127.0.0.1"`
-
-	f.WriteString(kindconfig)
-}
-
 func createCluster() {
 
-	createKindConfig()
+	c := getKindHelperConfig()
+	generateKindConfigFile(c)
 
-	var err_out error
 	cmd_tpl := "kind create cluster --config %v"
-
 	cmd := fmt.Sprintf(cmd_tpl, kindConfigFile)
 
-	out, errout, err := Shellout(cmd)
-	if err != nil {
-		err_msg := fmt.Sprintf("error creating kind cluster: %v\n", err)
-		err_out = errors.New(err_msg)
+	ExecCmd(cmd)
+
+	if c.UseCalico {
+		logger.Info("Install Calico CNI")
+		cmd = `kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml &&
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml`
+		ExecCmd(cmd)
+
 	}
 
-	outmsg := OutMsg{
-		cmd:    cmd,
-		err:    err_out,
-		out:    out,
-		errout: errout}
-
-	log.Printf("message: %v\n", outmsg)
+	logger.Info("Wait for Kubernetes nodes to be up and running")
+	cmd = "kubectl wait --timeout=180s --for=condition=Ready node --all"
+	ExecCmd(cmd)
 }
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Create a kind cluster",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Create k8s cluster")
 		createCluster()

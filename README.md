@@ -6,7 +6,7 @@ Helper to install Kubernetes clusters, based on [kind], on any Linux system. All
 - multi-nodes cluster
 - set CNI plugin and enable NetworkPolicies
 - enable PodSecurityPolicy adminission control plugin.
- 
+
 Can be used for VMs launched by a  CI/CD platform, including [Github Action](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
 
 [![CI Status](https://github.com/k8s-school/kind-helper/workflows/CI/badge.svg?branch=master)](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
@@ -16,46 +16,66 @@ Support kind v0.10.0 and k8s v1.20
 ## Run kind on a workstation, in two lines of code
 
 ```shell
-git clone https://github.com/k8s-school/kind-helper
+# Sudo access is required here
+VERSION="v1.0.1-rc1"
+curl -sfL https://raw.githubusercontent.com/k8s-school/kind-helper/$VERSION/install.sh | bash
 
 # Run a single node k8s cluster with kind
-./kind-helper/k8s-create.sh -s
+kind-helper create -s
 
-# Run a 3 nodes k8s cluster with kind 
-./kind-helper/k8s-create.sh
-
-# Run a k8s cluster with Canal CNI, in order to enable NetworkPolicies inside kind
-./kind-helper/k8s-create.sh -c canal
-
-# Run a k8s cluster with Cilium CNI
-./kind-helper/k8s-create.sh -c cilium
+# Run a 3 nodes k8s cluster with kind
+kind-helper create
 
 # Run a k8s cluster with Calico CNI
-./kind-helper/k8s-create.sh -c calico
+kind-helper create -c
 
 # Delete the kind cluster
-./kind-helper/k8s-delete.sh
+kind-helper delete
 
 ```
 
-## Run kind inside Travis-CI
+## Run kind inside Github Actions
 
 
 Check this **[tutorial: build a Kubernetes CI with Kind](https://k8s-school.fr/resources/en/blog/k8s-ci/)** in order to learn how to run [kind](https://github.com/kubernetes-sigs/kind) inside [Travis-CI](https://travis-ci.org/k8s-school/kind-helper).
 
 ### Pre-requisites
 
-* Create a github repository dedicated to  continous integration for a given application, for example: https://github.com/<GITHUB_ACCOUNT>/<GITHUB_REPOSITORY>
-* Active github repository for travis-ci, see https://travis-ci.org/<GITHUB_ACCOUNT>/<GITHUB_REPOSITORY>
-* Create a container image for the given application and push it to a container registry
- 
+* Create a Github repository for a given application, for example: https://github.com/<GITHUB_ACCOUNT>/<GITHUB_REPOSITORY>
+
 ### Setup
 
-* Add `kind` directory and `.travis.yml` file to your git repository
-* Update files `run.sh` and `test.sh` so that it run and test a given application in a given version
+Enable Github Action by creating file `.github/workflow/itests.yaml`, based on template below:
+```
+name: "Integration tests"
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+  itests:
+    name: Run integration tests on Kubernetes
+    runs-on: ubuntu-22.04
+    needs: build
+    env:
+      GHA_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create k8s/kind cluster
+        run: |
+          curl -sfL https://raw.githubusercontent.com/k8s-school/kind-helper/$VERSION/install.sh | bash
+          kind-helper create -s
+
+     - run: |
+          kubectl get nodes
+          # Add scripts which deploy and tests application on Kubernetes
+
+```
 
 
 [kind]:https://github.com/kubernetes-sigs/kind
+
 
 ## Additional resource
 
