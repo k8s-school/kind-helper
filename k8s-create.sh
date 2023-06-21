@@ -108,6 +108,9 @@ if [ "$SINGLE" = false ]; then
 cat >> "$KIND_CONFIG_FILE" <<EOF
 nodes:
 - role: control-plane
+  extraMounts:
+  - hostPath: /var/lib/containerd
+    containerPath: /var/lib/containerd
 EOF
   i=0
   until [ $i -ge $NB_WORKER ]

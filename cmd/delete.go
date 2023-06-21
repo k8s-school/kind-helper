@@ -4,33 +4,19 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
 )
 
 func deleteCluster() {
 
-	var err_out error
 	cmd_tpl := "kind delete cluster --name %v"
 
 	cmd := fmt.Sprintf(cmd_tpl, "kind")
 
-	out, errout, err := Shellout(cmd)
-	if err != nil {
-		err_msg := fmt.Sprintf("error deleting kind cluster: %v\n", err)
-		err_out = errors.New(err_msg)
-	}
+	ExecCmd(cmd)
 
-	outmsg := OutMsg{
-		cmd:    cmd,
-		err:    err_out,
-		out:    out,
-		errout: errout}
-
-	log.Printf("message: %v\n", outmsg)
 }
 
 // deleteCmd represents the delete command

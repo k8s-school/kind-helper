@@ -4,63 +4,20 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
-const kindConfigFile = "/tmp/kind-config.yaml"
-
-func createKindConfig() {
-	f, e := os.Create(kindConfigFile)
-	if e != nil {
-		log.Fatal(e)
-	}
-	defer f.Close()
-	log.Println(f)
-
-	kindconfig := `kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-featureGates:
-  "EphemeralContainers": true
-kubeadmConfigPatches:
-- |
-  apiVersion: kubeadm.k8s.io/v1beta2
-  kind: ClusterConfiguration
-  metadata:
-    name: config
-  apiServer:
-    certSANs:
-    - "127.0.0.1"`
-
-	f.WriteString(kindconfig)
-}
-
 func createCluster() {
 
-	createKindConfig()
+	generateKindConfigFile()
 
-	var err_out error
 	cmd_tpl := "kind create cluster --config %v"
 
 	cmd := fmt.Sprintf(cmd_tpl, kindConfigFile)
 
-	out, errout, err := Shellout(cmd)
-	if err != nil {
-		err_msg := fmt.Sprintf("error creating kind cluster: %v\n", err)
-		err_out = errors.New(err_msg)
-	}
-
-	outmsg := OutMsg{
-		cmd:    cmd,
-		err:    err_out,
-		out:    out,
-		errout: errout}
-
-	log.Printf("message: %v\n", outmsg)
+	ExecCmd(cmd)
 }
 
 // createCmd represents the create command

@@ -17,14 +17,24 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var cfgFile string
+
+var dryRun bool
+var secretCfgFile string
+
+var (
+	logger   *zap.SugaredLogger
+	logLevel int
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -51,7 +61,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initLogger, initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
@@ -62,6 +72,34 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+// setUpLogs set the log output ans the log level
+func initLogger() {
+
+	rawJSON := []byte(`{
+		"level": "debug",
+		"encoding": "console",
+		"outputPaths": ["stdout", "/tmp/logs"],
+		"errorOutputPaths": ["stderr"],
+		"encoderConfig": {
+		  "messageKey": "message",
+		  "levelKey": "level",
+		  "levelEncoder": "lowercase"
+		}
+	  }`)
+
+	var cfg zap.Config
+	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
+		panic(err)
+	}
+	_logger, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+	defer _logger.Sync()
+	logger = _logger.Sugar()
+
 }
 
 // initConfig reads in config file and ENV variables if set.
