@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strings"
-	"text/template"
 )
 
 const ShellToUse = "bash"
@@ -32,12 +30,4 @@ func ExecCmd(command string) (string, string) {
 		logger.Infof("Dry run %s", command)
 	}
 	return stdoutBuf.String(), stderrBuf.String()
-}
-func format(s string, v interface{}) string {
-	t, b := new(template.Template), new(strings.Builder)
-	err := template.Must(t.Parse(s)).Execute(b, v)
-	if err != nil {
-		logger.Fatalf("Error while formatting string %s: %v", s, err)
-	}
-	return b.String()
 }

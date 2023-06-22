@@ -17,22 +17,22 @@ const kindConfigFile = "/tmp/kind-config.yaml"
 // configgenCmd represents the configgen command
 var configgenCmd = &cobra.Command{
 	Use:   "configgen",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Generate a configuration file for kind",
+	Long: `Generate a configuration file for kind based
+on .kind-helper high-level configuration file
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.Info("Generate kind configuration file")
+
 		generateKindConfigFile()
 	},
 }
 
 type KindConfig struct {
-	PodSubnet string `mapstructure:"podsubnet"`
-	LogLevel  string `mapstructure:"log_level"`
+	ExtraMountContainerd bool   `mapstructure:"extramountcontainerd"`
+	LocalCertSANs        bool   `mapstructure:"localcertsans"`
+	PodSubnet            string `mapstructure:"podsubnet"`
+	Workers              uint   `mapstructure:"workers"`
+	LogLevel             string `mapstructure:"log_level"`
 }
 
 func init() {
@@ -61,14 +61,13 @@ func getKindConfig() KindConfig {
 }
 
 func generateKindConfigFile() {
-
+	logger.Info("Generate kind configuration file")
 	c := getKindConfig()
 	f, e := os.Create(kindConfigFile)
 	if e != nil {
 		log.Fatal(e)
 	}
 	defer f.Close()
-	log.Println(f)
 
 	kindconfig := applyTemplate(c)
 	f.WriteString(kindconfig)
@@ -80,12 +79,11 @@ func applyTemplate(sc KindConfig) string {
 
 	cfgTpl := `kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+  {{- if .PodSubnet }}
 networking:
   disableDefaultCNI: true # disable kindnet
-  {{- if not .Values.configmapReload.enabled }}
-  checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  podSubnet: "{{ .PodSubnet }}"
   {{- end }}
-  podSubnet: "{{ .PodSubnet }}" # set to Canal/Calico's default subnet
 kubeadmConfigPatches:
 - |
   apiVersion: kubeadm.k8s.io/v1beta2
@@ -95,14 +93,20 @@ kubeadmConfigPatches:
   apiServer:
     extraArgs:
       enable-admission-plugins: NodeRestriction,ResourceQuota
+	{{- if .LocalCertSANs }}
     certSANs:
       - "127.0.0.1"
+	{{- end }}
 nodes:
 - role: control-plane
+  {{- if .ExtraMountContainerd }}
   extraMounts:
-    - hostPath: /var/lib/containerd
-      containerPath: /var/lib/containerd
+  - hostPath: /var/lib/containerd
+    containerPath: /var/lib/containerd
+  {{- end }}
+  {{- range $val := Iterate .Workers }}
 - role: worker
+  {{- end }}
 `
 
 	kindconfig := format(cfgTpl, &sc)
