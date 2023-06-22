@@ -23,8 +23,8 @@ func ExecCmd(command string) (string, string) {
 		if err != nil {
 			logger.Fatalf("cmd.Run() failed with %s\n", err)
 		}
-		logger.Infof("%v", stdoutBuf)
-		logger.Infof("%v", stderrBuf)
+		// logger.Infof("stdout %v", stdoutBuf)
+		// logger.Infof("stderr %v", stderrBuf)
 
 	} else {
 		logger.Infof("Dry run %s", command)

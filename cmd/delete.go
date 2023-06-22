@@ -24,7 +24,7 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a kind cluster",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Delete k8s cluster")
+		logger.Info("Delete kind cluster")
 		deleteCluster()
 	},
 }

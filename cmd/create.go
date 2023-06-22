@@ -11,12 +11,24 @@ import (
 
 func createCluster() {
 
-	generateKindConfigFile()
+	c := getKindHelperConfig()
+	generateKindConfigFile(c)
 
 	cmd_tpl := "kind create cluster --config %v"
-
 	cmd := fmt.Sprintf(cmd_tpl, kindConfigFile)
 
+	ExecCmd(cmd)
+
+	if c.UseCalico {
+		logger.Info("Install Calico CNI")
+		cmd = `kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml &&
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml`
+		ExecCmd(cmd)
+
+	}
+
+	logger.Info("Wait for Kubernetes nodes to be up and running")
+	cmd = "kubectl wait --timeout=180s --for=condition=Ready node --all"
 	ExecCmd(cmd)
 }
 

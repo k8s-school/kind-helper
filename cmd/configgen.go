@@ -22,17 +22,17 @@ var configgenCmd = &cobra.Command{
 on .kind-helper high-level configuration file
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		generateKindConfigFile()
+		c := getKindHelperConfig()
+		generateKindConfigFile(c)
 	},
 }
 
-type KindConfig struct {
-	ExtraMountContainerd bool   `mapstructure:"extramountcontainerd"`
-	LocalCertSANs        bool   `mapstructure:"localcertsans"`
-	PodSubnet            string `mapstructure:"podsubnet"`
-	Workers              uint   `mapstructure:"workers"`
-	LogLevel             string `mapstructure:"log_level"`
+type KindHelperConfig struct {
+	ExtraMountPath string `mapstructure:"extramountpath"`
+	LocalCertSANs  bool   `mapstructure:"localcertsans"`
+	UseCalico      bool   `mapstructure:"usecalico"`
+	Workers        uint   `mapstructure:"workers"`
+	LogLevel       string `mapstructure:"log_level"`
 }
 
 func init() {
@@ -49,20 +49,20 @@ func init() {
 	// configgenCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func getKindConfig() KindConfig {
+func getKindHelperConfig() KindHelperConfig {
 
-	var c KindConfig
+	var c KindHelperConfig
 
 	if err := viper.UnmarshalKey(KIND, &c); err != nil {
-		logger.Fatalf("Error while getting kind configuration: %v", err)
+		logger.Fatalf("Error while getting kind-helper configuration: %v", err)
 	}
 
 	return c
 }
 
-func generateKindConfigFile() {
+func generateKindConfigFile(c KindHelperConfig) {
 	logger.Info("Generate kind configuration file")
-	c := getKindConfig()
+
 	f, e := os.Create(kindConfigFile)
 	if e != nil {
 		log.Fatal(e)
@@ -73,16 +73,16 @@ func generateKindConfigFile() {
 	f.WriteString(kindconfig)
 }
 
-func applyTemplate(sc KindConfig) string {
+func applyTemplate(sc KindHelperConfig) string {
 
 	// TODO check https://github.com/helm/helm/blob/main/pkg/chartutil/values.go
 
 	cfgTpl := `kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-  {{- if .PodSubnet }}
+  {{- if .UseCalico }}
 networking:
   disableDefaultCNI: true # disable kindnet
-  podSubnet: "{{ .PodSubnet }}"
+  podSubnet: "192.168.0.0/16"
   {{- end }}
 kubeadmConfigPatches:
 - |
@@ -99,10 +99,10 @@ kubeadmConfigPatches:
 	{{- end }}
 nodes:
 - role: control-plane
-  {{- if .ExtraMountContainerd }}
+  {{- if .ExtraMountPath }}
   extraMounts:
-  - hostPath: /var/lib/containerd
-    containerPath: /var/lib/containerd
+  - hostPath: {{ .ExtraMountPath }}
+    containerPath: /mnt/extra
   {{- end }}
   {{- range $val := Iterate .Workers }}
 - role: worker

@@ -4,8 +4,8 @@ kind:
   # Sets "127.0.0.1" as an extra Subject Alternative Names (SANs) for the API Server signing certificate.
   # See https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-APIServer
   localcertsans: true
-  # Use a specific host subnet
-  podsubnet: "192.168.0.0/16"
+  # Use calico CNI instead of kindnet
+  useCalico: true
   # Number of worker nodes
   # workers: 3
 
