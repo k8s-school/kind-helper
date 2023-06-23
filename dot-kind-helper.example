@@ -1,3 +1,4 @@
+# TODO update me!
 kind:
   # Use host directory to share container images
   # extraMountContainerd: true
@@ -5,8 +6,8 @@ kind:
   # See https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-APIServer
   localcertsans: true
   # Use calico CNI instead of kindnet
-  useCalico: true
+  # useCalico: true
   # Number of worker nodes
-  # workers: 3
+  workers: 6
 
 

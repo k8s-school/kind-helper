@@ -32,7 +32,6 @@ type KindHelperConfig struct {
 	LocalCertSANs  bool   `mapstructure:"localcertsans"`
 	UseCalico      bool   `mapstructure:"usecalico"`
 	Workers        uint   `mapstructure:"workers"`
-	LogLevel       string `mapstructure:"log_level"`
 }
 
 func init() {
@@ -57,11 +56,15 @@ func getKindHelperConfig() KindHelperConfig {
 		logger.Fatalf("Error while getting kind-helper configuration: %v", err)
 	}
 
+	c.UseCalico = viper.GetBool("calico")
+	if viper.GetBool("single") {
+		c.Workers = 0
+	}
 	return c
 }
 
 func generateKindConfigFile(c KindHelperConfig) {
-	logger.Info("Generate kind configuration file")
+	logger.Infof("Generate kind configuration file: %s", kindConfigFile)
 
 	f, e := os.Create(kindConfigFile)
 	if e != nil {

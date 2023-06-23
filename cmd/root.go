@@ -19,6 +19,7 @@ package cmd
 import (
 	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,13 +38,19 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "kind-helper",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A high-level cli on top of kind",
+	Long: `Creates kind-based Kubernetes cluster
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+  # Create a configuration file for kind
+  ./kind-helper configgen
+
+  # Create a single-node cluster using calico CNI
+  ./kind-helper create --single --calico
+
+  # Delete kind cluster
+  ./kind-helper delete
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -65,11 +72,16 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kind-helper.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "configuration file (default to $HOME/.kind-helper.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	rootCmd.PersistentFlags().BoolP("single", "s", false, "Create a single node k8s cluster, take precedence over configuration file 'workers' parameter")
+	rootCmd.PersistentFlags().BoolP("calico", "c", false, "Install calico CNI, take precedence over configuration file 'usecalico' parameter")
+	viper.BindPFlag("single", rootCmd.PersistentFlags().Lookup("single"))
+	viper.BindPFlag("calico", rootCmd.PersistentFlags().Lookup("calico"))
 }
 
 // setUpLogs set the log output ans the log level
@@ -110,9 +122,20 @@ func initConfig() {
 	cwd, err1 := os.Getwd()
 	cobra.CheckErr(err1)
 
+	defaultConfig := `kind:
+  # Sets "127.0.0.1" as an extra Subject Alternative Names (SANs) for the API Server signing certificate.
+  # See https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-APIServer
+  # localcertsans: true
+  # Use calico CNI instead of kindnet
+  # useCalico: true
+  # Number of worker nodes
+  workers: 3`
+
 	viper.AddConfigPath(cwd)
 	viper.AddConfigPath(home)
 	viper.SetConfigType("yaml")
+
+	viper.ReadConfig(strings.NewReader(defaultConfig))
 
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -122,9 +145,9 @@ func initConfig() {
 	}
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		logger.Debugf("Use config file: %s", viper.ConfigFileUsed())
+	if err := viper.MergeInConfig(); err == nil {
+		logger.Infof("Find user custom configuration %s", viper.ConfigFileUsed())
 	} else {
-		logger.Fatalf("Fail reading configuration file: ", err, viper.ConfigFileUsed())
+		logger.Warnf("Do not find user custom configuration %s", viper.ConfigFileUsed())
 	}
 }
