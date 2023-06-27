@@ -26,6 +26,9 @@ import (
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
+
+	versionCmd.Flags().BoolP("quiet", "q", false, "only print version number")
+
 }
 
 var versionCmd = &cobra.Command{
@@ -33,7 +36,14 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of kind-helper",
 	Run: func(cmd *cobra.Command, args []string) {
 		version, sum := Version()
-		fmt.Printf("%v  %v", version, sum)
+		quiet, _ := cmd.Flags().GetBool("quiet")
+
+		if quiet {
+			fmt.Print(version)
+			return
+		} else {
+			fmt.Printf("kind-helper, version: %v, checksum: %v", version, sum)
+		}
 	},
 }
 
@@ -50,5 +60,4 @@ func Version() (version, sum string) {
 		sum = b.Main.Sum
 	}
 	return version, sum
-
 }

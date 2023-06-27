@@ -74,12 +74,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "configuration file (default to $HOME/.kind-helper.yaml)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	rootCmd.PersistentFlags().BoolP("single", "s", false, "Create a single node k8s cluster, take precedence over configuration file 'workers' parameter")
-	rootCmd.PersistentFlags().BoolP("calico", "c", false, "Install calico CNI, take precedence over configuration file 'usecalico' parameter")
+	rootCmd.PersistentFlags().BoolP("single", "s", false, "create a single node k8s cluster, take precedence over configuration file 'workers' parameter")
+	rootCmd.PersistentFlags().BoolP("calico", "c", false, "install calico CNI, take precedence over configuration file 'usecalico' parameter")
 	viper.BindPFlag("single", rootCmd.PersistentFlags().Lookup("single"))
 	viper.BindPFlag("calico", rootCmd.PersistentFlags().Lookup("calico"))
 }
