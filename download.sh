@@ -44,4 +44,4 @@ TAR_FILE="${FILE_BASENAME}_${OS}_${ARCH}.tar.gz"
 )
 
 tar -xf "$TMP_DIR/$TAR_FILE" -C "$TMP_DIR"
-"$TMP_DIR/kind-helper" "$@"
+echo "$TMP_DIR/kind-helper"
