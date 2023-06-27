@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 # Download and run the latest release of kind-helper.
 
-set -e
+set -euxo pipefail
 
+VERSION=""
 RELEASES_URL="https://github.com/k8s-school/kind-helper/releases"
 FILE_BASENAME="kind-helper"
 LATEST="$(curl -s https://api.github.com/repos/k8s-school/kind-helper/releases/latest | jq --raw-output '.tag_name')"
@@ -45,4 +46,4 @@ TAR_FILE="${FILE_BASENAME}_${OS}_${ARCH}.tar.gz"
 )
 
 tar -xf "$TMP_DIR/$TAR_FILE" -C "$TMP_DIR"
-echo "$TMP_DIR/kind-helper"
+cp "$TMP_DIR/kind-helper" $(pwd)
