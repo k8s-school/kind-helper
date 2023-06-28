@@ -50,7 +50,6 @@ fi
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KIND_BIN="/usr/local/bin/kind"
 KIND_VERSION="v0.15.0"
-KUBECTL_VERSION="v1.25.0"
 
 # If kind exists, compare current version to desired one: kind version | awk '{print $2}'
  if [ -e $KIND_BIN ]; then
@@ -64,16 +63,6 @@ if [ ! -e $KIND_BIN ]; then
     curl -Lo /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/"$KIND_VERSION"/kind-linux-amd64
     chmod +x /tmp/kind
     sudo mv /tmp/kind "$KIND_BIN"
-fi
-
-# Download kubectl, which is a requirement for using kind.
-# TODO If kubectl exists, compare current version to desired one: kubectl version --client --short  | awk '{print $3}'
-if [ ! -e $KUBECTL_BIN ]; then
-    curl -Lo /tmp/kubectl https://dl.k8s.io/release/"$KUBECTL_VERSION"/bin/linux/amd64/kubectl
-    curl -Lo /tmp/kubectl.sha256 "https://dl.k8s.io/"$KUBECTL_VERSION"/bin/linux/amd64/kubectl.sha256"
-    echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum --check
-    chmod +x /tmp/kubectl
-    sudo mv /tmp/kubectl "$KUBECTL_BIN"
 fi
 
 
