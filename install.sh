@@ -17,19 +17,25 @@ EOD
 }
 
 # get the options
-while getopts c:n:w:s c ; do
+while getopts h c ; do
     case $c in
         h) usage ; exit 1 ;;
     esac
 done
 shift $(($OPTIND - 1))
 
+if [ $# -ne 0 ] ; then
+    usage
+    exit 2
+fi
+
+
 KUBECTL_BIN="/usr/local/bin/kubectl"
 KUBECTL_VERSION="v1.25.0"
 KIND_BIN="/usr/local/bin/kind"
 KIND_VERSION="v0.15.0"
 KINDHELPER_BIN="/usr/local/bin/kind-helper"
-KINDHELPER_VERSION="v1.0.1-rc7"
+KINDHELPER_VERSION="v1.0.1-rc8"
 
 # If kind exists, compare current version to desired one
  if [ -e $KIND_BIN ]; then
@@ -95,5 +101,3 @@ if [ ! -e $KINDHELPER_BIN ]; then
     chmod +x "/tmp/$BIN_FILE"
     sudo mv "/tmp/$BIN_FILE" "$KINDHELPER_BIN"
 fi
-
-$KINDHELPER_BIN "$@"
