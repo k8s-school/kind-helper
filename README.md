@@ -18,17 +18,20 @@ Support kind v0.10.0 and k8s v1.20
 ```shell
 git clone https://github.com/k8s-school/kind-helper
 
+# Install kind, kubectl and kind-helper
+./kind-helper/install.sh
+
 # Run a single node k8s cluster with kind
-./kind-helper/k8s-create.sh -s
+kind-helper create -s
 
 # Run a 3 nodes k8s cluster with kind
-./kind-helper/k8s-create.sh
+kind-helper create
 
 # Run a k8s cluster with Calico CNI
-./kind-helper/k8s-create.sh -c
+kind-helper create -c
 
 # Delete the kind cluster
-./kind-helper/k8s-delete.sh
+kind-helper delete
 
 ```
 
@@ -63,7 +66,8 @@ on:
       - name: Create k8s/kind cluster
         run: |
           git clone --depth 1 -b "k8s-1.21.1-1" --single-branch https://github.com/k8s-school/kind-helper.git
-          ./kind-helper/k8s-create.sh -s
+          ./kind-helper/install.sh
+
      - run: |
           kubectl get nodes
           # Add scripts which deploy and tests application on Kubernetes
