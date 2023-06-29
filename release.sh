@@ -4,7 +4,7 @@
 
 # @author  Fabrice Jammes, IN2P3
 
-set -euo pipefail
+set -euxo pipefail
 
 releasetag=""
 
@@ -44,4 +44,5 @@ git add .
 git commit -m "Publish release $releasetag"
 git tag -a "$releasetag" -m "Version $releasetag"
 git push --follow-tags
+rm -rf $DIR/dist
 goreleaser release
