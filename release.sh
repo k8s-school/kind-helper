@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Publish a qserv-ingest release
+# TODO use https://github.com/toshimaru/nyan/blob/main/.github/workflows/release.yml
 
 # @author  Fabrice Jammes, IN2P3
 

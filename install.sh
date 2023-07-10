@@ -70,7 +70,9 @@ if [ ! -e $KUBECTL_BIN ]; then
 fi
 
 # If kind-helper exists, compare current version to desired one
- if [ -e $KINDHELPER_BIN ]; then
+# TODO try to run kind-helper instead, it can be in an other place than KINDHELPER_BIN
+# TODO use `which` to perform above tasks?
+if [ -e $KINDHELPER_BIN ]; then
     CURRENT_KINDHELPER_VERSION="$(kind-helper version -q | tail -n 1)"
     if [ "$CURRENT_KINDHELPER_VERSION" != "$KINDHELPER_VERSION" ]; then
       sudo rm "$KINDHELPER_BIN"
