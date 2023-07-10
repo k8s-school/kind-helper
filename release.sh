@@ -40,6 +40,7 @@ fi
 
 releasetag=$1
 
+# TODO update VERSION in README.md
 sed -i "s/^KINDHELPER_VERSION=.*$/KINDHELPER_VERSION='$releasetag'/" $DIR/install.sh
 git add .
 git commit -m "Publish release $releasetag"
