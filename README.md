@@ -64,6 +64,7 @@ on:
         uses: actions/checkout@v2
       - name: Create k8s/kind cluster
         run: |
+	  VERSION="v1.0.1"
           curl -sfL https://raw.githubusercontent.com/k8s-school/kind-helper/$VERSION/install.sh | bash
           kind-helper create -s
 
