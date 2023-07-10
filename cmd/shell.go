@@ -2,24 +2,32 @@ package cmd
 
 import (
 	"bytes"
+	"io"
+	"os"
 	"os/exec"
 )
 
 const ShellToUse = "bash"
 
-type OutMsg struct {
-	cmd    string
-	err    error
-	out    string
-	errout string
-}
+func ExecCmd(command string) (string, string) {
 
-func Shellout(command string) (string, string, error) {
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd := exec.Command(ShellToUse, "-c", command)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	return stdout.String(), stderr.String(), err
+	var stdoutBuf, stderrBuf bytes.Buffer
+	if !dryRun {
+		logger.Infof("Launch command: %v", command)
+		cmd := exec.Command(ShellToUse, "-c", command)
+
+		cmd.Stdout = io.MultiWriter(os.Stdout, &stdoutBuf)
+		cmd.Stderr = io.MultiWriter(os.Stderr, &stderrBuf)
+
+		err := cmd.Run()
+		if err != nil {
+			logger.Fatalf("cmd.Run() failed with %s\n", err)
+		}
+		// logger.Infof("stdout %v", stdoutBuf)
+		// logger.Infof("stderr %v", stderrBuf)
+
+	} else {
+		logger.Infof("Dry run %s", command)
+	}
+	return stdoutBuf.String(), stderrBuf.String()
 }
