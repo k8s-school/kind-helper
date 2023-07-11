@@ -1,0 +1,8 @@
+* TODO Add DEBUG info
+# TODO add it as a kind-helper option
+env
+kubectl get sa -o yaml
+kubectl get nodes
+kubectl get pods -A -o wide
+kubectl get namespaces
+* TODO add option to install OLM
