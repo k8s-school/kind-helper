@@ -1,3 +1,14 @@
+* TODO name k8stux, knuf, k8s6, k8ctl, k8sdelictl, kool8s, k8stack
+* TODO add option to use local registry mirror
+See https://maelvls.dev/docker-proxy-registry-kind/#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry
+kind create cluster --config /dev/stdin <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+      endpoint = ["http://proxy:5000"]
+EOF
 * TODO Add DEBUG info
 # TODO add it as a kind-helper option
 env
