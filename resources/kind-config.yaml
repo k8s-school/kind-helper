@@ -33,4 +33,9 @@ nodes:
   {{- end }}
 {{- range $val := Iterate .Workers }}
 - role: worker
+  extraMounts:
+  {{- if $.ExtraMountPath }}
+  - hostPath: {{ $.ExtraMountPath }}
+    containerPath: /mnt/extra
+  {{- end }}
 {{- end }}

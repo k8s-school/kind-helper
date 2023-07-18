@@ -1,14 +1,5 @@
 * TODO name k8stux, knuf, k8s6, k8ctl, k8sdelictl, kool8s, k8stack
-* TODO add option to use local registry mirror
-See https://maelvls.dev/docker-proxy-registry-kind/#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry
-kind create cluster --config /dev/stdin <<EOF
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-containerdConfigPatches:
-  - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-      endpoint = ["http://proxy:5000"]
-EOF
+* TODO monitor https://github.com/kubernetes-sigs/kind/issues/3310
 * TODO Add DEBUG info
 # TODO add it as a kind-helper option
 env
@@ -16,4 +7,5 @@ kubectl get sa -o yaml
 kubectl get nodes
 kubectl get pods -A -o wide
 kubectl get namespaces
-* TODO add option to install OLM
+* DONE add option to install OLM
+* TODO remove hack to install argoCD: https://github.com/argoproj-labs/argocd-operator/issues/945
