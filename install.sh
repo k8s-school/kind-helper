@@ -35,7 +35,7 @@ KUBECTL_VERSION="v1.25.0"
 KIND_BIN="/usr/local/bin/kind"
 KIND_VERSION="v0.15.0"
 KINDHELPER_BIN="/usr/local/bin/kind-helper"
-KINDHELPER_VERSION='v1.0.1'
+KINDHELPER_VERSION='v1.0.2-rc1'
 
 # If kind exists, compare current version to desired one
  if [ -e $KIND_BIN ]; then

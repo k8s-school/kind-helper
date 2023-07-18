@@ -141,9 +141,15 @@ func initConfig() {
 	}
 
 	// If a config file is found, read it in.
+
 	if err := viper.MergeInConfig(); err == nil {
 		logger.Debugf("Find user custom configuration %s", viper.ConfigFileUsed())
 	} else {
-		logger.Debugf("Do not find user custom configuration %s", viper.ConfigFileUsed())
+		if _, err := os.Stat(viper.ConfigFileUsed()); err == nil {
+			logger.Fatalf("Unable to read user custom configuration %s, %v", viper.ConfigFileUsed(), err)
+		} else {
+			logger.Debugf("Do not find user custom configuration %s, %v", viper.ConfigFileUsed(), err)
+		}
 	}
+
 }

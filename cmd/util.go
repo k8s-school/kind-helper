@@ -14,7 +14,7 @@ func logConfiguration() {
 	if err != nil {
 		logger.Fatalf("unable to marshal kind-helper configuration to YAML: %v", err)
 	}
-	logger.Infof("Current finkctl configuration:\n%s", bs)
+	logger.Infof("Current kind-helper configuration:\n%s", bs)
 }
 
 func format(s string, v interface{}) string {

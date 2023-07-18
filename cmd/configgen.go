@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/k8s-school/kind-helper/resources"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -28,10 +29,11 @@ on .kind-helper high-level configuration file
 }
 
 type KindHelperConfig struct {
-	ExtraMountPath string `mapstructure:"extramountpath"`
-	LocalCertSANs  bool   `mapstructure:"localcertsans"`
-	UseCalico      bool   `mapstructure:"usecalico"`
-	Workers        uint   `mapstructure:"workers"`
+	ExtraMountPath  string `mapstructure:"extramountpath"`
+	LocalCertSANs   bool   `mapstructure:"localcertsans"`
+	PrivateRegistry string `mapstructure:"privateregistry"`
+	UseCalico       bool   `mapstructure:"usecalico"`
+	Workers         uint   `mapstructure:"workers"`
 }
 
 func init() {
@@ -65,6 +67,7 @@ func getKindHelperConfig() KindHelperConfig {
 
 func generateKindConfigFile(c KindHelperConfig) {
 	logger.Infof("Generate kind configuration file: %s", kindConfigFile)
+	logger.Debugf("for configuration: %v", c)
 
 	f, e := os.Create(kindConfigFile)
 	if e != nil {
@@ -80,38 +83,6 @@ func applyTemplate(sc KindHelperConfig) string {
 
 	// TODO check https://github.com/helm/helm/blob/main/pkg/chartutil/values.go
 
-	cfgTpl := `kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-  {{- if .UseCalico }}
-networking:
-  disableDefaultCNI: true # disable kindnet
-  podSubnet: "192.168.0.0/16"
-  {{- end }}
-kubeadmConfigPatches:
-- |
-  apiVersion: kubeadm.k8s.io/v1beta2
-  kind: ClusterConfiguration
-  metadata:
-    name: config
-  apiServer:
-    extraArgs:
-      enable-admission-plugins: NodeRestriction,ResourceQuota
-	{{- if .LocalCertSANs }}
-    certSANs:
-      - "127.0.0.1"
-	{{- end }}
-nodes:
-- role: control-plane
-  {{- if .ExtraMountPath }}
-  extraMounts:
-  - hostPath: {{ .ExtraMountPath }}
-    containerPath: /mnt/extra
-  {{- end }}
-  {{- range $val := Iterate .Workers }}
-- role: worker
-  {{- end }}
-`
-
-	kindconfig := format(cfgTpl, &sc)
+	kindconfig := format(resources.KindConfigTemplate, &sc)
 	return kindconfig
 }

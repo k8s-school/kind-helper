@@ -1,4 +1,4 @@
-package scripts
+package resources
 
 import (
 	_ "embed"
@@ -9,3 +9,6 @@ var OlmInstallScript string
 
 //go:embed argocd-install.sh
 var ArgoCDInstallScript string
+
+//go:embed kind-config.yaml
+var KindConfigTemplate string

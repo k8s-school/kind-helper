@@ -4,7 +4,7 @@ Copyright © 2023 Fabrice Jammes fabrice.jammes@k8s-school.fr
 package cmd
 
 import (
-	"github.com/k8s-school/kind-helper/scripts"
+	"github.com/k8s-school/kind-helper/resources"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.Info("Instal OLM")
 
-		ExecCmd(scripts.OlmInstallScript)
+		ExecCmd(resources.OlmInstallScript)
 	},
 }
 

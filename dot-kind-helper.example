@@ -1,13 +1,20 @@
-# TODO update me!
 kind:
-  # Use host directory to share container images
-  # extraMountContainerd: true
+  # Use host directory to share data between host and kind nodes
+  # host directory will be mounted on /mnt/extra on each node
+  # extraMountPath: /path/to/host/directory
+
   # Sets "127.0.0.1" as an extra Subject Alternative Names (SANs) for the API Server signing certificate.
   # See https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-APIServer
-  localcertsans: true
+  # Usefull to access API server through a ssh tunnel
+  localcertsans: false
+
   # Use calico CNI instead of kindnet
   # useCalico: true
   # Number of worker nodes
-  workers: 6
+  workers: 0
+
+  # Supported only for mononode cluster
+  # Certificates must be available on kind host at "/etc/docker/certs.d/{{ .PrivateRegistry }}"
+  privateRegistry: "docker-registry.docker-registry:5000"
 
 

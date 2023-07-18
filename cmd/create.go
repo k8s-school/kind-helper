@@ -12,6 +12,7 @@ import (
 func createCluster() {
 
 	c := getKindHelperConfig()
+	logConfiguration()
 	generateKindConfigFile(c)
 
 	cmd_tpl := "kind create cluster --config %v"

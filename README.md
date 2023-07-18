@@ -4,8 +4,8 @@
 
 Helper to install Kubernetes clusters, based on [kind], on any Linux system. Allow to easily setup:
 - multi-nodes cluster
-- set CNI plugin and enable NetworkPolicies
-- enable PodSecurityPolicy admission control plugin.
+- use of Calico CNI
+- use of an insecure private registry
 
 Can be used for VMs launched by a  CI/CD platform, including [Github Action](https://github.com/k8s-school/kind-helper/actions?query=workflow%3A"CI")
 
