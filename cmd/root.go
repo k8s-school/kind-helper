@@ -18,7 +18,9 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"os/user"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -83,10 +85,18 @@ func init() {
 // setUpLogs set the log output ans the log level
 func initLogger() {
 
+	// put current user if in a variable
+	user, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
+	outputPath := fmt.Sprintf("/tmp/kind-helper-%s.log", user.Username)
+
 	rawJSON := []byte(`{
 		"level": "debug",
 		"encoding": "console",
-		"outputPaths": ["stdout", "/tmp/logs"],
+		"outputPaths": ["stdout", "` + outputPath + `"],
 		"errorOutputPaths": ["stderr"],
 		"encoderConfig": {
 		  "messageKey": "message",

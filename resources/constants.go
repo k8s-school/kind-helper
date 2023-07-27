@@ -12,3 +12,6 @@ var ArgoCDInstallScript string
 
 //go:embed kind-config.yaml
 var KindConfigTemplate string
+
+//go:embed helm-install.sh
+var HelmInstallScript string

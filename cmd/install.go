@@ -1,6 +1,5 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -13,13 +12,8 @@ import (
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Install Kubernetes components on the cluster or on the client machine",
+	Long:  `Install Kubernetes components on the cluster or on the client machine. Sudo access is required to install components on the client machine.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("install called")
 	},
