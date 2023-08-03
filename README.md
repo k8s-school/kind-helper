@@ -1,5 +1,7 @@
 [<img src="http://k8s-school.fr/images/logo.svg" alt="K8s-school Logo, expertise et formation Kubernetes" height="50" />](https://k8s-school.fr)
 
+DEPRECATED, merged with https://github.com/k8s-school/k8s-toolbox
+
 # kind-helper
 
 Helper to install Kubernetes clusters, based on [kind], on any Linux system. Allow to easily setup:
